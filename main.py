@@ -2,10 +2,9 @@ import streamlit as st
 import pymongo
 from datetime import datetime
 import pandas as pd
-import os
 
-MONGO_URI = os.environ.get("MONGO_URI")
-client = pymongo.MongoClient("MONGO_URI")
+mongo_uri = st.secrets["MONGO_URI"]
+client = pymongo.MongoClient(mongo_uri)
 db = client["analytics"]
 collection = db["analytics"]
 
