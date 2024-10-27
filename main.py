@@ -35,7 +35,7 @@ def process_documents(docs):
     return processed_data
 
 # Fetch and process data
-docs = list(collection.find())
+docs = list(collection.find().sort("currentTimestamp", -1))
 data = process_documents(docs)
 
 # Streamlit layout
