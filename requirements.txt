@@ -11,6 +11,7 @@ dnspython==2.7.0
 fonttools==4.54.1
 gitdb==4.0.11
 GitPython==3.1.43
+google-play-scraper==1.2.7
 idna==3.10
 Jinja2==3.1.4
 jsonschema==4.23.0
