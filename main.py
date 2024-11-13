@@ -151,6 +151,10 @@ elif page == "Location Page":
             apple_maps_url = f"https://maps.apple.com/?q={latitude},{longitude}"
 
             st.markdown(f"[Click here to view on Apple Maps]({apple_maps_url})")
+
+            google_maps_url = f"https://www.google.com/maps/?q={latitude},{longitude}"
+
+            st.markdown(f"[Click here to view on Google Maps]({google_maps_url})")
             # When the time is clicked, display the map
             # if st.button("Show Location on Map"):
             display_map(latitude, longitude)
