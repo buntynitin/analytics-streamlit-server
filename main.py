@@ -81,9 +81,15 @@ def fetch_locations():
     return list(location_collection.find().sort("time", -1))
 
 def display_map(latitude, longitude):
+    icon = folium.Icon(
+        icon="user",  # You can change this to any font-awesome icon or leave it as a custom image
+        icon_color="white",
+        color="blue",  # Set the marker color
+        prefix="fa"  # If using FontAwesome icons
+    )
     # Create a map centered around the given latitude and longitude
     location_map = folium.Map(location=[latitude, longitude], zoom_start=15)
-    folium.Marker([latitude, longitude]).add_to(location_map)
+    folium.Marker([latitude, longitude], icon=icon).add_to(location_map)
     # Display the map using Streamlit's folium component
     return st_folium(location_map, width=725)
 
