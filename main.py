@@ -7,6 +7,7 @@ import folium
 from streamlit_folium import st_folium
 from google_play_scraper import app
 import math
+import html as html_module
 
 # ── Page Config ──────────────────────────────────────────────────────────────
 st.set_page_config(
@@ -462,36 +463,43 @@ if page == "🔔 Notifications":
         # ── Render notification cards ──
         for notif in filtered[start:end]:
             pkg = notif.get("package", "Unknown")
-            title = notif.get("title", "")
-            text = notif.get("text", "")
-            sub_text = notif.get("subText", "")
+            title = html_module.escape(str(notif.get("title", "")))
+            text = html_module.escape(str(notif.get("text", "")))
+            sub_text = html_module.escape(str(notif.get("subText", "")))
             timestamp = notif.get("timestamp", 0)
-            device_name = notif.get("deviceName", "Unknown")
-            device_id = notif.get("deviceId", "")
-            icon = get_notification_icon(pkg)
+            device_name = html_module.escape(str(notif.get("deviceName", "Unknown")))
             time_str = format_time_short(timestamp) if timestamp else "—"
 
-            # App name lookup
+            # App name & icon lookup (same as App Usage page)
             app_info = get_app_name_or_package(pkg)
-            app_name = app_info['app_name']
+            app_name = html_module.escape(str(app_info['app_name']))
+            app_image = app_info.get('app_image')
+
+            # Use Play Store icon if available, otherwise fallback emoji
+            if app_image:
+                icon_html = f'<img src="{app_image}" style="width:42px;height:42px;border-radius:10px;object-fit:cover;" alt="{app_name}">'
+            else:
+                icon_html = f'<span style="font-size:2rem;">{get_notification_icon(pkg)}</span>'
 
             sub_html = f'<div class="notif-text" style="color:#aaa;font-size:0.82rem;">{sub_text}</div>' if sub_text else ""
+            display_title = title if title else app_name
 
-            st.markdown(f"""
-            <div class="notif-card">
-                <div class="notif-icon">{icon}</div>
-                <div class="notif-body">
-                    <div class="notif-title">{title if title else app_name}</div>
-                    <div class="notif-text">{text}</div>
-                    {sub_html}
-                    <div class="notif-meta">
-                        <span>📱 {device_name}</span>
-                        <span>📦 {app_name}</span>
-                        <span>🕐 {time_str}</span>
-                    </div>
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
+            card_html = (
+                '<div class="notif-card">'
+                f'<div class="notif-icon">{icon_html}</div>'
+                '<div class="notif-body">'
+                f'<div class="notif-title">{display_title}</div>'
+                f'<div class="notif-text">{text}</div>'
+                f'{sub_html}'
+                '<div class="notif-meta">'
+                f'<span>📱 {device_name}</span>'
+                f'<span>📦 {app_name}</span>'
+                f'<span>🕐 {time_str}</span>'
+                '</div>'
+                '</div>'
+                '</div>'
+            )
+            st.markdown(card_html, unsafe_allow_html=True)
 
         # Bottom pagination
         st.markdown("<br>", unsafe_allow_html=True)
