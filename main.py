@@ -28,10 +28,15 @@ html, body, [class*="css"] {
 
 /* ── Sidebar ────────────────────────────────────── */
 section[data-testid="stSidebar"] {
-    background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+    background: #f8f9fb;
+    border-right: 1px solid #e8e8ef;
 }
 section[data-testid="stSidebar"] .stRadio label {
-    color: #e0e0e0 !important;
+    color: #333 !important;
+    font-weight: 500;
+}
+section[data-testid="stSidebar"] .stRadio label:hover {
+    color: #6c63ff !important;
 }
 
 /* ── Cards ──────────────────────────────────────── */
@@ -220,7 +225,7 @@ client = pymongo.MongoClient(mongo_uri)
 db = client["analytics"]
 app_collection = db["analytics"]
 location_collection = db["locations"]
-notification_collection = db["notification"]
+notification_collection = db["notifications"]
 ist = pytz.timezone("Asia/Kolkata")
 
 ITEMS_PER_PAGE = 15
@@ -366,19 +371,19 @@ def process_documents(docs):
     return processed_data
 
 
-def display_map(latitude, longitude):
+def display_map(latitude, longitude, map_key="default"):
     icon = folium.Icon(icon="user", icon_color="white", color="blue", prefix="fa")
     location_map = folium.Map(location=[latitude, longitude], zoom_start=15)
     folium.Marker([latitude, longitude], icon=icon).add_to(location_map)
-    return st_folium(location_map, width=725, height=450)
+    return st_folium(location_map, width=725, height=450, key=f"map_{map_key}")
 
 
 # ── Sidebar Navigation ──────────────────────────────────────────────────────
 st.sidebar.markdown("""
 <div style="text-align:center; padding:1rem 0 0.5rem;">
     <span style="font-size:2rem;">📊</span>
-    <div style="font-size:1.1rem; font-weight:700; color:#fff; margin-top:0.3rem;">Device Analytics</div>
-    <div style="font-size:0.75rem; color:#aaa;">Real-time monitoring dashboard</div>
+    <div style="font-size:1.1rem; font-weight:700; color:#1a1a2e; margin-top:0.3rem;">Device Analytics</div>
+    <div style="font-size:0.75rem; color:#888;">Real-time monitoring dashboard</div>
 </div>
 """, unsafe_allow_html=True)
 
@@ -568,7 +573,7 @@ elif page == "📍 Locations":
                     google_maps_url = f"https://www.google.com/maps/?q={latitude},{longitude}"
                     st.markdown(f"[🗺️ Open in Google Maps]({google_maps_url})")
 
-                display_map(latitude, longitude)
+                display_map(latitude, longitude, map_key=f"loc_{start + idx}")
 
         st.markdown("<br>", unsafe_allow_html=True)
         paginate("locations_bottom", len(locations))
